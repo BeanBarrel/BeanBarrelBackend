@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,8 @@ public class SaleService {
         sale.setCustomerName(request.getCustomerName());
         sale.setCustomerEmail(request.getCustomerEmail());
         sale.setCustomerPhone(request.getCustomerPhone());
-        sale.setDateTime(LocalDateTime.parse(request.getDateTime()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        sale.setDateTime(LocalDateTime.parse(request.getDateTime(), formatter));
 
         List<CartItem> cartItems = new ArrayList<>();
         for (CartItemRequest itemReq : request.getItems()) {
