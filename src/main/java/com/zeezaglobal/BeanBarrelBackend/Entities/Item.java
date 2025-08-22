@@ -1,6 +1,7 @@
 package com.zeezaglobal.BeanBarrelBackend.Entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +19,7 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "groupId")
+    @JsonIgnore
     private Group group;
 
     // Getters and setters
