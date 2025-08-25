@@ -6,6 +6,7 @@ public class SaleRequest {
     private Long billNumber;
     private int tokenNumber;
     private int status;
+    private int store;
     private double totalAmount;
     private String dateTime; // ISO string
     private String paymentMethod;
@@ -13,6 +14,14 @@ public class SaleRequest {
     private String customerEmail;
     private String customerPhone;
     private List<CartItemRequest> items;
+
+    public int getStore() {
+        return store;
+    }
+
+    public void setStore(int store) {
+        this.store = store;
+    }
 
     public Long getBillNumber() {
         return billNumber;

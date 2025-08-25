@@ -25,6 +25,8 @@ public class Sale {
 
         private int status;
 
+        private int store;
+
         private double totalAmount;
 
         private LocalDateTime dateTime;
@@ -42,6 +44,14 @@ public class Sale {
         @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
 
         private List<CartItem> items;
+
+        public int getStore() {
+                return store;
+        }
+
+        public void setStore(int store) {
+                this.store = store;
+        }
 
         public Long getId() {
                 return id;

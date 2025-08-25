@@ -32,6 +32,7 @@ public class SaleService {
         sale.setBillNumber(request.getBillNumber());
         sale.setTokenNumber(request.getTokenNumber());
         sale.setStatus(request.getStatus());
+        sale.setStore(request.getStore());
         sale.setTotalAmount(request.getTotalAmount());
         sale.setPaymentMethod(request.getPaymentMethod());
         sale.setCustomerName(request.getCustomerName());
