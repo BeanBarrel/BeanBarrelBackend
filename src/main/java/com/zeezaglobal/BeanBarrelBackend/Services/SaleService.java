@@ -57,6 +57,9 @@ public class SaleService {
         return saleRepository.save(sale);
     }
 
+    public List<Sale> getSalesByStoreAndDateRange(int store, LocalDateTime start, LocalDateTime end) {
+        return saleRepository.findByStoreAndDateTimeBetween(store, start, end);
+    }
 
     public List<Sale> getAllSales() {
         return saleRepository.findAll();
