@@ -52,13 +52,5 @@ public class SaleController {
         return ResponseEntity.ok(sales);
     }
     // Get Sale by bill number
-    @GetMapping("/{billNumber}")
-    public ResponseEntity<Sale> getSale(@PathVariable Long billNumber) {
-        Sale sale = saleService.getSaleByBillNumber(billNumber);
-        if (sale != null) {
-            return ResponseEntity.ok(sale);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 }

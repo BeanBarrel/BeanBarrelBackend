@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SaleService {
@@ -28,6 +29,17 @@ public class SaleService {
 
     @Transactional
     public Sale createSale(SaleRequest request) {
+        // Check if a sale with this billNumber already exists
+        Optional<Sale> existingSaleOpt = saleRepository.findByBillNumber(request.getBillNumber());
+
+        if (existingSaleOpt.isPresent()) {
+            // Just update the status
+            Sale existingSale = existingSaleOpt.get();
+            existingSale.setStatus(request.getStatus());
+            return saleRepository.save(existingSale);
+        }
+
+        // Otherwise create a new sale
         Sale sale = new Sale();
         sale.setBillNumber(request.getBillNumber());
         sale.setTokenNumber(request.getTokenNumber());
@@ -38,9 +50,11 @@ public class SaleService {
         sale.setCustomerName(request.getCustomerName());
         sale.setCustomerEmail(request.getCustomerEmail());
         sale.setCustomerPhone(request.getCustomerPhone());
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         sale.setDateTime(LocalDateTime.parse(request.getDateTime(), formatter));
 
+        // Add cart items only for NEW sale
         List<CartItem> cartItems = new ArrayList<>();
         for (CartItemRequest itemReq : request.getItems()) {
             Item item = itemRepository.findById(itemReq.getItemId().intValue())
@@ -52,8 +66,8 @@ public class SaleService {
             cartItem.setSale(sale);
             cartItems.add(cartItem);
         }
-
         sale.setItems(cartItems);
+
         return saleRepository.save(sale);
     }
 
@@ -65,7 +79,5 @@ public class SaleService {
         return saleRepository.findAll();
     }
 
-    public Sale getSaleByBillNumber(Long billNumber) {
-        return saleRepository.findByBillNumber(billNumber);
-    }
+
 }
