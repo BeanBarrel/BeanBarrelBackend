@@ -15,11 +15,12 @@ public class GroupDataLoader {
     @Autowired
     private GroupRepository groupRepository;
 
-/*    @PostConstruct
+ /*   @PostConstruct
     public void loadGroups() {
         List<Group> groups = Arrays.asList(
                 createGroup("HOT BEV"),
                 createGroup("HOT BEV SPL"),
+                createGroup("TEA"),
                 createGroup("ICED BEV"),
                 createGroup("ICED BEV SPL"),
                 createGroup("COLD COFFEE"),
@@ -28,9 +29,8 @@ public class GroupDataLoader {
                 createGroup("MOJITTO"),
                 createGroup("CRUSHERS"),
                 createGroup("NONCOFFEE FRAPPE"),
-                createGroup("POPCORN"),
-                createGroup("POPSICLE"),
-                createGroup("SNACKS")
+                createGroup("SNACKS"),
+                createGroup("SMOOTHIES")
         );
 
         groupRepository.saveAll(groups);
