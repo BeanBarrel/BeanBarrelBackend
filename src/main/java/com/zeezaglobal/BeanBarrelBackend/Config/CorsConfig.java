@@ -17,7 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:3000",
                                 "https://beanbarrel.in",
-                                "http://10.0.0.37:9091"
+                                "http://10.0.0.37:3000"
                         )
                         .allowedMethods("*")
                         .allowedHeaders("*")
