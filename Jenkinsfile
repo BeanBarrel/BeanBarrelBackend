@@ -15,10 +15,21 @@ pipeline {
             }
         }
 
+        // ✅ New Stage: Clear Docker Cache
+        stage('Clear Docker Cache') {
+            steps {
+                script {
+                    echo "Clearing Docker cache (containers, images, networks, volumes, build cache)..."
+                    // Force remove everything unused
+                    sh "docker system prune -af --volumes || echo 'Docker prune failed or nothing to prune'"
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
             }
         }
