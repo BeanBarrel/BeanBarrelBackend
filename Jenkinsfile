@@ -6,21 +6,33 @@ pipeline {
         IMAGE_TAG = "latest"
         CONTAINER_NAME = "beanbarrel_backend"
         APP_PORT = "9091"
+        SPRING_PROFILE = ""
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    // Determine the branch and set the appropriate Spring profile
+                    if (env.GIT_BRANCH == 'origin/dev' || env.BRANCH_NAME == 'dev') {
+                        SPRING_PROFILE = "dev"
+                        echo "Using application-dev.properties"
+                    } else if (env.GIT_BRANCH == 'origin/main' || env.BRANCH_NAME == 'main') {
+                        SPRING_PROFILE = "prod"
+                        echo "Using application-prod.properties"
+                    } else {
+                        SPRING_PROFILE = "dev"  // default fallback
+                        echo "Defaulting to DEV profile"
+                    }
+                }
             }
         }
 
-        // ✅ New Stage: Clear Docker Cache
         stage('Clear Docker Cache') {
             steps {
                 script {
                     echo "Clearing Docker cache (containers, images, networks, volumes, build cache)..."
-                    // Force remove everything unused
                     sh "docker system prune -af --volumes || echo 'Docker prune failed or nothing to prune'"
                 }
             }
@@ -37,9 +49,7 @@ pipeline {
         stage('Stop & Remove Existing Container') {
             steps {
                 script {
-                    // Stop container if running
                     sh "docker ps -q --filter name=${CONTAINER_NAME} | grep -q . && docker stop ${CONTAINER_NAME} || echo 'No container running'"
-                    // Remove container if exists
                     sh "docker ps -aq --filter name=${CONTAINER_NAME} | grep -q . && docker rm ${CONTAINER_NAME} || echo 'No container to remove'"
                 }
             }
@@ -47,14 +57,22 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                sh "docker run -d -p ${APP_PORT}:${APP_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
+                script {
+                    sh """
+                        docker run -d \
+                        -e SPRING_PROFILES_ACTIVE=${SPRING_PROFILE} \
+                        -p ${APP_PORT}:${APP_PORT} \
+                        --name ${CONTAINER_NAME} \
+                        ${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
             }
         }
     }
 
     post {
         success {
-            echo "Application deployed successfully!"
+            echo "Application deployed successfully with profile: ${SPRING_PROFILE}"
         }
         failure {
             echo "Pipeline failed."

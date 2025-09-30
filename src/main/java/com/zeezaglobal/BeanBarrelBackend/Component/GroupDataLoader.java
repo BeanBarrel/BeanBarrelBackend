@@ -15,7 +15,7 @@ public class GroupDataLoader {
     @Autowired
     private GroupRepository groupRepository;
 
- /*   @PostConstruct
+/*    @PostConstruct
     public void loadGroups() {
         List<Group> groups = Arrays.asList(
                 createGroup("HOT BEV"),
