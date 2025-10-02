@@ -8,6 +8,9 @@ import com.zeezaglobal.BeanBarrelBackend.Entities.Sale;
 import com.zeezaglobal.BeanBarrelBackend.Repositories.ItemRepository;
 import com.zeezaglobal.BeanBarrelBackend.Repositories.SaleRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -71,8 +74,15 @@ public class SaleService {
         return saleRepository.save(sale);
     }
 
-    public List<Sale> getSalesByStoreAndDateRange(int store, LocalDateTime start, LocalDateTime end) {
-        return saleRepository.findByStoreAndDateTimeBetween(store, start, end);
+    public Page<Sale> getSalesByStoreAndDateRange(
+            int store,
+            LocalDateTime start,
+            LocalDateTime end,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return saleRepository.findByStoreAndDateTimeBetween(store, start, end, pageable);
     }
 
     public List<Sale> getAllSales() {

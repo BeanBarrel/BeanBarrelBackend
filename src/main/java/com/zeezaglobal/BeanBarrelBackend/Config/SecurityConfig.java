@@ -17,7 +17,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // no need for REST
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // REST = stateless
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll() // whitelist
+                        .requestMatchers("/api/groups").permitAll()  // whitelist
                         .anyRequest().authenticated() // secure everything else
                 )
                 .httpBasic(Customizer.withDefaults()); // use Basic Auth (or replace with JWT later)
