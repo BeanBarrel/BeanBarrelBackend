@@ -12,7 +12,7 @@ public class UserConfig {
     @Bean
     public UserDetailsService users() {
         UserDetails user = User.withDefaultPasswordEncoder()
-                .username("test")
+                .username("sreehari@gmail.com")
                 .password("1234")
                 .roles("USER")
                 .build();
