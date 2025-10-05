@@ -1,6 +1,8 @@
 package com.zeezaglobal.BeanBarrelBackend.Repositories;
 
 import com.zeezaglobal.BeanBarrelBackend.Entities.Sale;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,7 +15,13 @@ import java.util.Optional;
 public interface SaleRepository extends JpaRepository<Sale, Long> {
     Optional<Sale> findByBillNumber(Long billNumber);
 
-    List<Sale> findByStoreAndDateTimeBetween(int store, LocalDateTime start, LocalDateTime end);
+    Page<Sale> findByStoreAndDateTimeBetween(
+            int store,
+            LocalDateTime start,
+            LocalDateTime end,
+            Pageable pageable
+    );
+    List<Sale> findByDateTimeBetweenAndStore(LocalDateTime start, LocalDateTime end, Integer store);
 
     @Query("SELECT FUNCTION('DATE_FORMAT', s.dateTime, '%Y-%m') AS month, COUNT(s), SUM(s.totalAmount) " +
             "FROM Sale s GROUP BY FUNCTION('DATE_FORMAT', s.dateTime, '%Y-%m') ORDER BY month")

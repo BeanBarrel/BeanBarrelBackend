@@ -20,6 +20,7 @@ public class GroupDataLoader {
         List<Group> groups = Arrays.asList(
                 createGroup("HOT BEV"),
                 createGroup("HOT BEV SPL"),
+                createGroup("TEA"),
                 createGroup("ICED BEV"),
                 createGroup("ICED BEV SPL"),
                 createGroup("COLD COFFEE"),
@@ -28,9 +29,8 @@ public class GroupDataLoader {
                 createGroup("MOJITTO"),
                 createGroup("CRUSHERS"),
                 createGroup("NONCOFFEE FRAPPE"),
-                createGroup("POPCORN"),
-                createGroup("POPSICLE"),
-                createGroup("SNACKS")
+                createGroup("SNACKS"),
+                createGroup("SMOOTHIES")
         );
 
         groupRepository.saveAll(groups);

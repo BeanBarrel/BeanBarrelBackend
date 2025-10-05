@@ -3,6 +3,7 @@ package com.zeezaglobal.BeanBarrelBackend.Controllers;
 import com.zeezaglobal.BeanBarrelBackend.DTO.SaleRequest;
 import com.zeezaglobal.BeanBarrelBackend.Entities.Sale;
 import com.zeezaglobal.BeanBarrelBackend.Services.SaleService;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +35,11 @@ public class SaleController {
     }
 
     @GetMapping("/by-date-store")
-    public ResponseEntity<List<Sale>> getSalesByDateAndStore(
+    public ResponseEntity<Page<Sale>> getSalesByDateAndStore(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam("store") int store) {
+            @RequestParam("store") int store,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         LocalDateTime start = date.atTime(3, 0);
         LocalDateTime end = date.plusDays(1).atTime(3, 0);
@@ -45,11 +48,11 @@ public class SaleController {
                 + " on date: " + date
                 + " (start: " + start + ", end: " + end + ")");
 
-        List<Sale> sales = saleService.getSalesByStoreAndDateRange(store, start, end);
+        Page<Sale> salesPage = saleService.getSalesByStoreAndDateRange(store, start, end, page, size);
 
-        System.out.println(">>> Total sales found: " + sales.size());
+        System.out.println(">>> Total sales found on this page: " + salesPage.getNumberOfElements());
 
-        return ResponseEntity.ok(sales);
+        return ResponseEntity.ok(salesPage);
     }
     // Get Sale by bill number
 
