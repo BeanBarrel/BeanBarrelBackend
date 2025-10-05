@@ -21,6 +21,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             LocalDateTime end,
             Pageable pageable
     );
+    List<Sale> findByDateTimeBetweenAndStore(LocalDateTime start, LocalDateTime end, Integer store);
 
     @Query("SELECT FUNCTION('DATE_FORMAT', s.dateTime, '%Y-%m') AS month, COUNT(s), SUM(s.totalAmount) " +
             "FROM Sale s GROUP BY FUNCTION('DATE_FORMAT', s.dateTime, '%Y-%m') ORDER BY month")

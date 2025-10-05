@@ -11,7 +11,7 @@ public class DashboardResponse {
     private Map<String, Long> salesByStatus;
     private List<MonthlySalesData> monthlySales;
     private Map<Integer, Double> storeSales;
-
+    private Map<String, Double> hourlySales;
     // Nested DTO for monthly sales
     public static class MonthlySalesData {
         private String month;
@@ -29,6 +29,10 @@ public class DashboardResponse {
         public double getRevenue() { return revenue; }
     }
 
+    public void setHourlySales(Map<String, Double> hourlySales) {
+        this.hourlySales = hourlySales;
+    }
+
     public long getTotalSalesCount() { return totalSalesCount; }
     public void setTotalSalesCount(long totalSalesCount) { this.totalSalesCount = totalSalesCount; }
 
@@ -43,6 +47,10 @@ public class DashboardResponse {
 
     public List<MonthlySalesData> getMonthlySales() { return monthlySales; }
     public void setMonthlySales(List<MonthlySalesData> monthlySales) { this.monthlySales = monthlySales; }
+
+    public Map<String, Double> getHourlySales() {
+        return hourlySales;
+    }
 
     public Map<Integer, Double> getStoreSales() { return storeSales; }
     public void setStoreSales(Map<Integer, Double> storeSales) { this.storeSales = storeSales; }

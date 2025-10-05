@@ -1,9 +1,11 @@
 package com.zeezaglobal.BeanBarrelBackend.Services;
 
 import com.zeezaglobal.BeanBarrelBackend.DTO.DashboardResponse;
+import com.zeezaglobal.BeanBarrelBackend.Entities.Sale;
 import com.zeezaglobal.BeanBarrelBackend.Repositories.SaleRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,54 +19,35 @@ public class DashboardService {
         this.saleRepository = saleRepository;
     }
 
-    public DashboardResponse getDashboardData() {
+    public DashboardResponse getDashboardData(LocalDateTime startDate, LocalDateTime endDate, Integer storeId) {
         DashboardResponse response = new DashboardResponse();
 
-        long totalSales = saleRepository.count();
-        double totalRevenue = saleRepository.findAll()
-                .stream()
-                .mapToDouble(s -> s.getTotalAmount())
-                .sum();
+        // 1. Fetch sales filtered by date & store
+        List<Sale> filteredSales = saleRepository.findByDateTimeBetweenAndStore(startDate, endDate, storeId);
 
-        // Monthly Sales
-        List<DashboardResponse.MonthlySalesData> monthlySales = saleRepository.getMonthlySalesSummary()
-                .stream()
-                .map(obj -> new DashboardResponse.MonthlySalesData(
-                        (String) obj[0],
-                        (Long) obj[1],
-                        (Double) obj[2]
-                )).collect(Collectors.toList());
+        long totalSalesCount = filteredSales.size();
+        double totalRevenue = filteredSales.stream().mapToDouble(Sale::getTotalAmount).sum();
 
-        // Payment Method Breakdown
-        Map<String, Long> paymentMethodMap = saleRepository.getSalesByPaymentMethod()
-                .stream()
-                .collect(Collectors.toMap(
-                        obj -> (String) obj[0],
-                        obj -> (Long) obj[1]
+        // 2. Payment Method Breakdown
+        Map<String, Long> paymentMethodMap = filteredSales.stream()
+                .collect(Collectors.groupingBy(Sale::getPaymentMethod, Collectors.counting()));
+
+        // 3. Status Breakdown
+        Map<String, Long> statusMap = filteredSales.stream()
+                .collect(Collectors.groupingBy(s -> String.valueOf(s.getStatus()), Collectors.counting()));
+
+        // 4. Hourly Sales Data (Map<"2025-10-05 14:00", revenue>)
+        Map<String, Double> hourlySalesMap = filteredSales.stream()
+                .collect(Collectors.groupingBy(
+                        s -> s.getDateTime().withMinute(0).withSecond(0).withNano(0).toString(),
+                        Collectors.summingDouble(Sale::getTotalAmount)
                 ));
 
-        // Status Breakdown
-        Map<String, Long> statusMap = saleRepository.getSalesByStatus()
-                .stream()
-                .collect(Collectors.toMap(
-                        obj -> String.valueOf(obj[0]),
-                        obj -> (Long) obj[1]
-                ));
-
-        // Store Sales
-        Map<Integer, Double> storeSalesMap = saleRepository.getStoreSales()
-                .stream()
-                .collect(Collectors.toMap(
-                        obj -> (Integer) obj[0],
-                        obj -> (Double) obj[1]
-                ));
-
-        response.setTotalSalesCount(totalSales);
+        response.setTotalSalesCount(totalSalesCount);
         response.setTotalRevenue(totalRevenue);
-        response.setMonthlySales(monthlySales);
         response.setSalesByPaymentMethod(paymentMethodMap);
         response.setSalesByStatus(statusMap);
-        response.setStoreSales(storeSalesMap);
+        response.setHourlySales(hourlySalesMap);
 
         return response;
     }
